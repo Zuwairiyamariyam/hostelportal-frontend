@@ -411,11 +411,11 @@ export default function Login() {
                     onClick={handleVerifyRoll}
                     disabled={verifying}
                   >
-                    {verifying ? 'CHECKING...' : 'NEXT →'}
+                    {verifying ? 'CHECKING' : 'NEXT →'}
                   </button>
                 ) : (
                   <button type="submit" className="login-btn" disabled={loading}>
-                    {loading ? 'CHECKING...' : 'LOGIN'}
+                    {loading ? 'CHECKING' : 'LOGIN'}
                   </button>
                 )}
               </div>
