@@ -1,0 +1,276 @@
+.warden-container {
+  min-height: 100vh;
+  background-color: #ECEEF2;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #111827;
+}
+
+.warden-header {
+  background: linear-gradient(135deg, #7A1424 0%, #4D0A15 100%);
+  color: #ffffff;
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+}
+
+.warden-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.warden-badge {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warden-brand h1 {
+  font-size: 20px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.warden-brand p {
+  font-size: 12px;
+  color: #F8C3CD;
+  margin: 3px 0 0 0;
+  font-weight: 600;
+}
+
+.warden-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #F8C3CD;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.warden-logout-btn:hover {
+  background-color: #A31D31;
+  color: #ffffff;
+}
+
+.warden-main {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+/* Stats */
+.warden-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.warden-stat-card {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 18px;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B7280;
+}
+
+.stat-num {
+  font-size: 28px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.text-green { color: #059669; }
+.text-blue { color: #2563EB; }
+
+/* Task Card */
+.warden-task-card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 28px;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid #E5E7EB;
+}
+
+.task-card-header h2 {
+  font-size: 18px;
+  font-weight: 900;
+  margin: 0;
+  color: #111827;
+}
+
+.task-card-header small {
+  color: #6B7280;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 20px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  border-color: #7A1424;
+  color: #7A1424;
+}
+
+.task-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.task-item-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-radius: 16px;
+  border: 1.5px solid #E5E7EB;
+  background-color: #FAFAFA;
+  transition: border-color 0.2s ease;
+}
+
+.task-item-box:hover {
+  border-color: #D1D5DB;
+}
+
+.task-left-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.task-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #FDE8EB;
+  color: #7A1424;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-left-info h3 {
+  font-size: 15px;
+  font-weight: 900;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.task-left-info p {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 600;
+  margin: 0;
+}
+
+.task-controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.warden-status-pill {
+  font-size: 11px;
+  font-weight: 900;
+  padding: 5px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.warden-status-pill.status-SCHEDULED {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.warden-status-pill.status-ACTIVE {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.warden-status-pill.status-COMPLETED {
+  background-color: #E5E7EB;
+  color: #374151;
+}
+
+.btn-toggle-group {
+  display: flex;
+  background-color: #ffffff;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 25px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.action-pill-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #4B5563;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.action-pill-btn.active-scheduled {
+  background-color: #F59E0B;
+  color: #ffffff;
+}
+
+.action-pill-btn.active-active {
+  background-color: #10B981;
+  color: #ffffff;
+}
+
+.action-pill-btn.active-completed {
+  background-color: #4B5563;
+  color: #ffffff;
+}
