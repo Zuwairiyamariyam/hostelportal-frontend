@@ -28,12 +28,12 @@ export default function AdminDashboard() {
   const fetchAdminData = () => {
     setLoading(true);
     // 1. Fetch Dashboard Stats
-    axios.get('https://hostelportal-backend-7buv.onrender.com//api/admin/dashboard-stats')
+    axios.get('https://hostelportal-backend-7buv.onrender.com/api/admin/dashboard-stats')
       .then(res => setStats(res.data))
       .catch(err => console.error(err));
 
     // 2. Fetch All Complaints
-    axios.get('https://hostelportal-backend-7buv.onrender.com//api/complaints')
+    axios.get('https://hostelportal-backend-7buv.onrender.com/api/complaints')
       .then(res => setComplaints(res.data))
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
     if (!selectedComplaint) return;
 
     try {
-      await axios.put(`https://hostelportal-backend-7buv.onrender.com//api/complaints/${selectedComplaint.id}/status`, {
+      await axios.put(`https://hostelportal-backend-7buv.onrender.com/api/complaints/${selectedComplaint.id}/status`, {
         status: newStatus,
         message: adminRemark || `Status updated to ${newStatus} by Admin`,
         updatedBy: 'HOSTEL_ADMIN'

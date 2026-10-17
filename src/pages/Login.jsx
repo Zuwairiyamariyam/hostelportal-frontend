@@ -54,12 +54,12 @@ export default function Login() {
     setVerifying(true);
 
     try {
-      const res = await axios.get(`https://hostelportal-backend-7buv.onrender.com//api/students/verify/${studentRollNo.trim()}`);
+      const res = await axios.get(`https://hostelportal-backend-7buv.onrender.com/api/students/verify/${studentRollNo.trim()}`);
       setVerifiedStudentName(res.data);
       setIsRollVerified(true);
     } catch (err) {
       try {
-        const allRes = await axios.get('https://hostelportal-backend-7buv.onrender.com//api/students');
+        const allRes = await axios.get('https://hostelportal-backend-7buv.onrender.com/api/students');
         const found = allRes.data.find(s => s.rollNo.equalsIgnoreCase ? s.rollNo.equalsIgnoreCase(studentRollNo.trim()) : s.rollNo.toLowerCase() === studentRollNo.trim().toLowerCase());
         if (found) {
           setVerifiedStudentName(found.name);
@@ -91,7 +91,7 @@ export default function Login() {
     try {
       if (portalMode === 'MAIN') {
         if (role === 'STUDENT') {
-          const response = await axios.post('https://hostelportal-backend-7buv.onrender.com//api/students/login', {
+          const response = await axios.post('https://hostelportal-backend-7buv.onrender.com/api/students/login', {
             rollNo: studentRollNo.trim(),
             dob: studentDob.trim()
           });
@@ -103,7 +103,7 @@ export default function Login() {
           setIsRollVerified(false);
           navigate('/student-dashboard');
         } else {
-          const response = await axios.post('https://hostelportal-backend-7buv.onrender.com//api/admin/login', {
+          const response = await axios.post('https://hostelportal-backend-7buv.onrender.com/api/admin/login', {
             adminId: adminId.trim(),
             password: adminPassword
           });

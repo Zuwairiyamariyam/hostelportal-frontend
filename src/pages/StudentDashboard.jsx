@@ -169,19 +169,19 @@ export default function StudentDashboard() {
   ];
 
   const fetchStudentData = (userData) => {
-    axios.get(`https://hostelportal-backend-7buv.onrender.com//api/students/${userData.id}/roommates`)
+    axios.get(`https://hostelportal-backend-7buv.onrender.com/api/students/${userData.id}/roommates`)
       .then(res => setRoommates(res.data))
       .catch(err => console.log('Error fetching roommates:', err));
 
-    axios.get(`https://hostelportal-backend-7buv.onrender.com//api/complaints/student/${userData.id}`)
+    axios.get(`https://hostelportal-backend-7buv.onrender.com/api/complaints/student/${userData.id}`)
       .then(res => setComplaints(res.data))
       .catch(err => console.log('Error fetching complaints:', err));
 
-    axios.get(`https://hostelportal-backend-7buv.onrender.com//api/notifications/student/${userData.id}`)
+    axios.get(`https://hostelportal-backend-7buv.onrender.com/api/notifications/student/${userData.id}`)
       .then(res => setNotifications(res.data))
       .catch(err => console.log('Error fetching notifications:', err));
 
-    axios.get('https://hostelportal-backend-7buv.onrender.com//api/categories')
+    axios.get('https://hostelportal-backend-7buv.onrender.com/api/categories')
       .then(res => {
         if (res.data && res.data.length > 0) {
           setCategories(res.data);
@@ -205,7 +205,7 @@ export default function StudentDashboard() {
     fetchStudentData(userData);
 
     const interval = setInterval(() => {
-      axios.get(`https://hostelportal-backend-7buv.onrender.com//api/notifications/student/${userData.id}`)
+      axios.get(`https://hostelportal-backend-7buv.onrender.com/api/notifications/student/${userData.id}`)
         .then(res => setNotifications(res.data))
         .catch(() => {});
     }, 4000);
@@ -218,7 +218,7 @@ export default function StudentDashboard() {
     if (tabName === 'notifications') {
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
       if (student) {
-        axios.put(`https://hostelportal-backend-7buv.onrender.com//api/notifications/student/${student.id}/read`).catch(() => {});
+        axios.put(`https://hostelportal-backend-7buv.onrender.com/api/notifications/student/${student.id}/read`).catch(() => {});
       }
     }
   };
@@ -249,7 +249,7 @@ export default function StudentDashboard() {
         anonymous: anonymous
       };
 
-      const res = await axios.post('https://hostelportal-backend-7buv.onrender.com//api/complaints', payload);
+      const res = await axios.post('https://hostelportal-backend-7buv.onrender.com/api/complaints', payload);
       
       setComplaints([res.data, ...complaints]);
       setShowModal(false);
