@@ -23,17 +23,30 @@ import {
 } from 'lucide-react';
 import './StudentDashboard.css';
 
+// 🎯 Display Name Mapping (Option 2 - Perfectly Symmetrical Names)
+const CATEGORY_DISPLAY_MAP = {
+  1: 'Room Repair',
+  2: 'Water Supply',
+  3: 'Mess & Food',
+  4: 'House Keeping',
+  5: 'Power & Light',
+  6: 'Safety Concern',
+  7: 'Room Conflict',
+  8: 'Warden Help',
+  9: 'General Query'
+};
+
 // Default categories fallback
 const DEFAULT_CATEGORIES = [
-  { id: 1, name: 'Room Maintenance' },
+  { id: 1, name: 'Room Repair' },
   { id: 2, name: 'Water Supply' },
-  { id: 3, name: 'Food & Mess' },
-  { id: 4, name: 'Cleanliness / Dustbin' },
-  { id: 5, name: 'Electrical Issue' },
-  { id: 6, name: 'Safety & Ragging' },
-  { id: 7, name: 'Roommate Issue' },
-  { id: 8, name: 'Warden & Staff' },
-  { id: 9, name: 'General / Other' }
+  { id: 3, name: 'Mess & Food' },
+  { id: 4, name: 'House Keeping' },
+  { id: 5, name: 'Power & Light' },
+  { id: 6, name: 'Safety Concern' },
+  { id: 7, name: 'Room Conflict' },
+  { id: 8, name: 'Warden Help' },
+  { id: 9, name: 'General Query' }
 ];
 
 export default function StudentDashboard() {
@@ -82,8 +95,9 @@ export default function StudentDashboard() {
     return departments[department?.trim()?.toUpperCase()] || department;
   };
 
+  // 🎯 Clean Symmetrical Display Category Name Helper
   const getCategoryName = (catId) => {
-    return categories.find(c => c.id === Number(catId))?.name || 'General';
+    return CATEGORY_DISPLAY_MAP[Number(catId)] || categories.find(c => c.id === Number(catId))?.name || 'General Query';
   };
 
   // Joining Date Helper
@@ -158,14 +172,50 @@ export default function StudentDashboard() {
   const currentDayIndex = new Date().getDay();
   const messMenu = WEEKLY_MESS_SCHEDULE[currentDayIndex];
 
-  // Amenities list
+  // 3x2 Grid Balanced Amenities list
   const amenitiesList = [
-    { id: 1, title: 'Unlimited water supply', desc: '24x7 continuous purified drinking & utility water', icon: Droplets },
-    { id: 2, title: 'Stable Wifi connection', desc: 'High-speed campus broadband access for all rooms', icon: Wifi },
-    { id: 3, title: 'Three times food included with evening snacks', desc: 'Nutritious breakfast, lunch, snacks & dinner daily', icon: Utensils },
-    { id: 4, title: 'Hotwater provided if needed', desc: 'Instant geyser & solar hot water facilities', icon: Flame },
-    { id: 5, title: 'Daily room cleaning', desc: 'Regular housekeeping and dustbin clearance', icon: Sparkles },
-    { id: 6, title: 'Fridge available in the kitchen', desc: 'Common refrigerator facility accessible for hostelers', icon: Refrigerator }
+    { 
+      id: 1, 
+      title: '24x7 Water Supply', 
+      desc: 'Purified drinking & utility water non-stop', 
+      tag: 'Continuous',
+      icon: Droplets 
+    },
+    { 
+      id: 2, 
+      title: 'High-Speed Wi-Fi', 
+      desc: 'Campus broadband coverage for all rooms', 
+      tag: '5G Speed',
+      icon: Wifi 
+    },
+    { 
+      id: 3, 
+      title: 'Full Board Food', 
+      desc: 'Nutritious breakfast, lunch, snacks & dinner', 
+      tag: '3 Meals/Day',
+      icon: Utensils 
+    },
+    { 
+      id: 4, 
+      title: 'Hot Water Facility', 
+      desc: 'Instant geysers & solar hot water on demand', 
+      tag: 'Instant Geyser',
+      icon: Flame 
+    },
+    { 
+      id: 5, 
+      title: 'Daily Housekeeping', 
+      desc: 'Room cleaning & routine dustbin clearance', 
+      tag: 'Daily Routine',
+      icon: Sparkles 
+    },
+    { 
+      id: 6, 
+      title: 'Kitchen Refrigerator', 
+      desc: 'Common fridge access for hostel residents', 
+      tag: 'Shared Access',
+      icon: Refrigerator 
+    }
   ];
 
   const fetchStudentData = (userData) => {
@@ -259,7 +309,7 @@ export default function StudentDashboard() {
       setDropdownOpen(false);
       alert(`Complaint #${res.data.complaintNumber} registered successfully!`);
     } catch (err) {
-      alert('Failed to raise complaint. Backend check pannunga!');
+      alert('Failed to raise complaint.');
     } finally {
       setSubmitting(false);
     }
@@ -288,32 +338,32 @@ export default function StudentDashboard() {
               className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
               onClick={() => handleTabChange('overview')}
             >
-              <Home size={18} />
-              <span>Dashboard</span>
+              <span className="nav-icon"><Home size={18} /></span>
+              <span className="nav-label">Overview</span>
             </button>
 
             <button 
               className={`nav-item ${activeTab === 'complaints' ? 'active' : ''}`}
               onClick={() => handleTabChange('complaints')}
             >
-              <FileText size={18} />
-              <span>My Complaints</span>
+              <span className="nav-icon"><FileText size={18} /></span>
+              <span className="nav-label">Requests</span>
             </button>
 
             <button 
               className={`nav-item ${activeTab === 'facilities' ? 'active' : ''}`}
               onClick={() => handleTabChange('facilities')}
             >
-              <Utensils size={18} />
-              <span>Facilities & Mess</span>
+              <span className="nav-icon"><Utensils size={18} /></span>
+              <span className="nav-label">Services</span>
             </button>
 
             <button 
               className={`nav-item ${activeTab === 'notifications' ? 'active' : ''}`}
               onClick={() => handleTabChange('notifications')}
             >
-              <Bell size={18} />
-              <span>Notifications</span>
+              <span className="nav-icon"><Bell size={18} /></span>
+              <span className="nav-label">Messages</span>
               {unreadCount > 0 && (
                 <span className="badge-count">{unreadCount}</span>
               )}
@@ -478,7 +528,7 @@ export default function StudentDashboard() {
                         <td>
                           <span style={{ 
                             fontSize: '11px', 
-                            fontWeight: 900,
+                            fontWeight: 900, 
                             color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
                           }}>
                             {c.priority}
@@ -540,7 +590,7 @@ export default function StudentDashboard() {
           </div>
         )}
 
-        {/* TAB 3: FACILITIES & MESS MENU */}
+        {/* TAB 3: FACILITIES & MESS MENU (Modern 3x2 Balanced Layout) */}
         {activeTab === 'facilities' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div className="card">
@@ -586,50 +636,28 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            {/* Amenities Provided Card */}
+            {/* Amenities Provided Card (3x2 Balanced Grid) */}
             <div className="card">
               <div className="card-header-row">
                 <h3><CheckCircle size={18} color="#7A1424" /> Amenities Provided</h3>
                 <span style={{ fontSize: '12px', fontWeight: 800, color: '#374151' }}>Inclusive with Hostel Stay</span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginTop: '10px' }}>
+              <div className="amenities-grid-3x2">
                 {amenitiesList.map((item) => {
                   const IconComponent = item.icon;
                   return (
-                    <div 
-                      key={item.id} 
-                      style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '16px',
-                        padding: '18px 22px', 
-                        border: '1px solid #E5E7EB', 
-                        borderRadius: '14px',
-                        backgroundColor: '#ffffff',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
-                      }}
-                    >
-                      <div style={{ 
-                        background: '#FDE8EB', 
-                        color: '#7A1424', 
-                        width: '44px',
-                        height: '44px',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0
-                      }}>
-                        <IconComponent size={22} />
+                    <div key={item.id} className="amenity-card-3x2">
+                      <div className="amenity-card-top">
+                        <div className="amenity-icon-box">
+                          <IconComponent size={20} />
+                        </div>
+                        <span className="amenity-tag-badge">{item.tag}</span>
                       </div>
-                      <div>
-                        <div style={{ fontSize: '14.5px', fontWeight: 900, color: '#111827', lineHeight: 1.3 }}>
-                          {item.title}
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#6B7280', fontWeight: 600, marginTop: '3px' }}>
-                          {item.desc}
-                        </div>
+                      
+                      <div className="amenity-card-content">
+                        <h4 className="amenity-title">{item.title}</h4>
+                        <p className="amenity-desc">{item.desc}</p>
                       </div>
                     </div>
                   );
@@ -735,7 +763,7 @@ export default function StudentDashboard() {
 
       </main>
 
-      {/* Modal */}
+      {/* Modal with Symmetrical Category Names */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -757,7 +785,7 @@ export default function StudentDashboard() {
                   className={`custom-select-trigger ${dropdownOpen ? 'open' : ''}`}
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
-                  <span>{categories.find(c => c.id === Number(selectedCategory))?.name || 'Select Category'}</span>
+                  <span>{getCategoryName(selectedCategory)}</span>
                   <span className={`dropdown-arrow ${dropdownOpen ? 'rotate' : ''}`}>▾</span>
                 </div>
 
@@ -772,7 +800,7 @@ export default function StudentDashboard() {
                           setDropdownOpen(false);
                         }}
                       >
-                        {c.name}
+                        {getCategoryName(c.id)}
                       </div>
                     ))}
                   </div>
@@ -815,7 +843,7 @@ export default function StudentDashboard() {
                 <textarea 
                   className="auto-adjust-textarea"
                   rows="3"
-                  placeholder="Detail your complaint clearly with room/floor references..."
+                  placeholder="Detail your complaint clearly with room/floor references"
                   required
                   value={description}
                   onChange={handleDescriptionChange}

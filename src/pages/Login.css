@@ -1,13 +1,3 @@
-/* Full page scroll-ah complete-aa stop panna */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
 /* Container with Velvet Maroon Base - Locked exactly to 100vh zero scroll */
 .login-wrapper {
   height: 100vh;
@@ -17,7 +7,7 @@ html, body {
   justify-content: center;
   background-color: #1a0205; /* Deep rich velvet maroon base */
   position: relative;
-  overflow: hidden; /* Vertical matrum Horizontal rendu scroll-um complete-aa blocked */
+  overflow: hidden; /* Vertical and Horizontal scroll locked strictly inside login */
   padding: 16px;
   box-sizing: border-box;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -39,8 +29,8 @@ html, body {
 /* ============================================================ */
 .custom-exact-note-box.soft-blue-box {
   width: 390px;
-  background-color: #E8F0F8; /* Soft Blue Background */
-  border: 1.5px solid #C5D8EA; /* Soft Blue Outline */
+  background-color: #E8F0F8;
+  border: 1.5px solid #C5D8EA;
   border-radius: 28px;
   padding: 24px 22px;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
@@ -73,7 +63,6 @@ html, body {
   letter-spacing: 0.8px;
 }
 
-/* Minimal Line directly under NOTE header */
 .soft-blue-box .exact-note-header-line {
   border: none;
   border-top: 1.5px solid #C5D8EA;
@@ -81,7 +70,6 @@ html, body {
   width: 100%;
 }
 
-/* Justified Paragraph Alignment */
 .soft-blue-box .exact-note-text {
   font-size: 12.5px;
   color: #274B6E;
@@ -92,7 +80,6 @@ html, body {
   text-justify: inter-word;
 }
 
-/* Want to explore the portal on top, prompt text below */
 .soft-blue-box .exact-note-prompt-group {
   margin: 0 0 14px 0;
 }
@@ -135,7 +122,6 @@ html, body {
   margin-bottom: 2px;
 }
 
-/* Single Line Credentials Row */
 .soft-blue-box .exact-cred-single-line {
   display: flex;
   align-items: center;
@@ -173,7 +159,6 @@ html, body {
   color: #183B5B;
 }
 
-/* Footer disclaimer */
 .soft-blue-box .exact-note-footer {
   font-size: 11px;
   color: #55728F;
@@ -188,8 +173,6 @@ html, body {
   color: #0E2942;
   font-weight: 800;
 }
-
-/* ============================================================ */
 
 /* Background Decorative Glowing Blobs */
 .login-wrapper::before {
@@ -502,7 +485,6 @@ html, body {
   font-weight: 500;
 }
 
-/* Action Row */
 .action-row {
   display: flex;
   align-items: center;
@@ -569,7 +551,6 @@ html, body {
   text-decoration: underline;
 }
 
-/* Accordion Smooth Expand Box */
 .accordion-expand-box {
   display: flex;
   flex-direction: column;
@@ -606,7 +587,6 @@ html, body {
   letter-spacing: 0.3px;
 }
 
-/* Responsive Adaptation */
 @media (max-width: 1180px) {
   .split-showcase-container {
     flex-direction: column;
