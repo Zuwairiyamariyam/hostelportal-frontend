@@ -1,16 +1,26 @@
-# React + Vite
+# 🏢 Hostel Complaint Resolution Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack web application designed to streamline student grievance handling, ticket tracking, and administrative resolution workflows with automated notifications and status management.
 
-Currently, two official plugins are available:
+## 🔗 Project Links & Backend Repository
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🌐 **Live Demo:** [hostelportal-frontend.vercel.app](https://hostelportal-frontend.vercel.app/)
+- ⚙️ **Backend Repository:** [hostelportal-backend (Spring Boot, Hibernate & MySQL)](https://github.com/Zuwairiyamariyam/hostelportal-backend)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Features
 
-## Expanding the ESLint configuration
+- 📝 **Complaint Registration:** Submit room, maintenance, electrical, and facility grievances with category tags.
+- 🔄 **Real-Time Status Tracking:** Track resolution progression (Pending, In Progress, Resolved) dynamically.
+- 🛡️ **Admin Dashboard & Workflow:** Administrative panel to filter, assign priority, and update ticket lifecycle.
+- 📱 **Fully Responsive:** Smooth UI experience across mobile, tablet, and desktop devices.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React.js, CSS3, REST API Integration
+- **Backend:** Java, Spring Boot, Hibernate ORM, RESTful APIs
+- **Database:** MySQL
+- **Deployment:** Vercel (Frontend) & Cloud Persistence
