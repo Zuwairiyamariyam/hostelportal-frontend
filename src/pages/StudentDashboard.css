@@ -565,32 +565,22 @@
   line-height: 1.4;
 }
 
-/* Status Badges */
+/* Status Badges - Perfect Symmetrical Fixed Length for All */
 .status-pill {
   font-size: 11px;
   font-weight: 900;
-  padding: 5px 12px;
-  border-radius: 20px;
+  padding: 3px 10px;
+  border-radius: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  display: inline-block;
+  text-align: center;
+  min-width: 86px; /* 🎯 Idhu dhaan secret! Ella status box-um exact same length-ku irukkum */
+  box-sizing: border-box;
 }
 
-.status-SUBMITTED {
-  background-color: #FEF3C7;
-  color: #92400E;
-}
-
-.status-UNDER_REVIEW, .status-ACKNOWLEDGED {
-  background-color: #DBEAFE;
-  color: #1E40AF;
-}
-
-.status-RESOLVED {
-  background-color: #D1FAE5;
-  color: #065F46;
-}
-
-/* Table Style */
+/* Table Style (Desktop) */
 .table-container {
   width: 100%;
   border-collapse: collapse;
@@ -615,12 +605,28 @@
   font-weight: 600;
 }
 
+.desktop-table-view {
+  display: block;
+}
+
+.mobile-complaint-cards {
+  display: none; /* Desktop-la hide aagum */
+}
+
 .notification-item-card {
   padding: 16px 20px;
   border-radius: 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.notification-body-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 2px;
+  line-height: 1.45;
 }
 
 .mobile-bottom-nav {
@@ -845,6 +851,17 @@
 }
 
 @media (max-width: 768px) {
+  /* 🛡️ Strict Viewport Protection - Screen right-side expand aaguradha completely block panrom */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  .dashboard-container {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
   .sidebar {
     display: none !important;
   }
@@ -853,9 +870,12 @@
     margin-left: 0 !important;
     padding: 16px 14px 84px 14px !important;
     min-height: 100vh;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
   }
 
-  /* 🎯 RESTORED COMPACT SINGLE-ROW TOPBAR: Left Welcome + Right Helpline & Logout */
+  /* 🎯 RESTORED SINGLE-ROW TOPBAR: Perfect Alignment */
   .topbar {
     display: flex !important;
     flex-direction: row !important;
@@ -864,9 +884,9 @@
     margin-bottom: 20px !important;
     gap: 8px !important;
     width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  /* Left Side: Welcome Student Name */
   .topbar-title {
     flex: 1 1 auto !important;
     min-width: 0 !important;
@@ -874,7 +894,7 @@
   }
 
   .topbar-title h1 {
-    font-size: 17.5px !important; /* Compact balanced font to stay on left */
+    font-size: 17.5px !important;
     font-weight: 900 !important;
     color: #7A1424 !important;
     letter-spacing: -0.2px !important;
@@ -884,7 +904,6 @@
     text-overflow: ellipsis !important;
   }
 
-  /* Right Side: Helpline Pill + Circular Logout */
   .topbar-right-cluster {
     display: flex !important;
     align-items: center !important;
@@ -947,6 +966,8 @@
     align-items: flex-start;
     gap: 14px;
     margin-bottom: 18px;
+    box-sizing: border-box !important;
+    width: 100% !important;
   }
 
   .action-banner h2 {
@@ -971,34 +992,46 @@
     grid-template-columns: 1fr !important;
     gap: 16px;
     margin-bottom: 18px;
+    width: 100% !important;
   }
 
   .card {
     padding: 18px 16px;
     border-radius: 18px;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
-/* 🔹 My Details Box: Symmetrical Padding & Independent Column Controls */
+  /* 🔹 My Details Box: Symmetrical Padding & Independent Transforms */
   .details-card-body {
     grid-template-columns: 1fr 1fr !important;
     width: 100%;
+    box-sizing: border-box !important;
   }
 
   .detail-field {
     min-width: 0;
   }
 
-  /* Left side-ah mattum nagatha */
-.details-card-body > .detail-field:nth-child(odd) .detail-field-title,
-.details-card-body > .detail-field:nth-child(odd) .detail-field-value {
-  transform: translateX(4px) !important; /* Plus number kudutha right-ku nagarum, minus (-4px) kudutha left-ku nagarum */
-}
+  .details-card-body > .detail-field:nth-child(odd) {
+    padding: 10px 8px 10px 14px !important;
+  }
 
-/* Right side-ah mattum nagatha */
-.details-card-body > .detail-field:nth-child(even) .detail-field-title,
-.details-card-body > .detail-field:nth-child(even) .detail-field-value {
-  transform: translateX(20px) !important; /* Plus number kudutha right-ku nagarum, minus (-10px) kudutha left-ku nagarum */
-}
+  .details-card-body > .detail-field:nth-child(even) {
+    padding: 10px 8px 10px 14px !important;
+  }
+
+  .details-card-body > .detail-field:nth-child(odd) .detail-field-title,
+  .details-card-body > .detail-field:nth-child(odd) .detail-field-value {
+    transform: translateX(4px) !important;
+  }
+
+  .details-card-body > .detail-field:nth-child(even) .detail-field-title,
+  .details-card-body > .detail-field:nth-child(even) .detail-field-value {
+    transform: translateX(20px) !important;
+  }
 
   .detail-field-title {
     font-size: 11.5px;
@@ -1045,7 +1078,111 @@
     height: 13px !important;
   }
 
-  /* 🎯 FIXED MESS MENU & ALL CARD HEADERS: Fits perfectly on a single line on all screen sizes */
+  /* ============================================================ */
+  /* 🎯 INNOVATIVE APP-STYLE MOBILE COMPLAINT CARDS (ZERO OVERFLOW) */
+  /* ============================================================ */
+  .desktop-table-view {
+    display: none !important; /* Mobile-la periya blowout table hide aagum */
+  }
+
+  .mobile-complaint-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 4px;
+  }
+
+  .mobile-complaint-card-item {
+    background-color: #F8F9FA;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  }
+
+  .m-card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .m-card-cmp-no {
+    font-size: 13px;
+    font-weight: 900;
+    color: #7A1424;
+    letter-spacing: 0.3px;
+  }
+
+  .m-card-details-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 11.5px;
+    color: #374151;
+  }
+
+  .m-card-category {
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .m-card-bullet {
+    color: #9CA3AF;
+    font-size: 10px;
+  }
+
+  .m-card-room {
+    font-weight: 700;
+    color: #4B5563;
+  }
+
+  .m-card-priority {
+    font-weight: 800;
+    font-size: 11px;
+  }
+
+  .m-card-desc-box {
+    font-size: 12px;
+    color: #1F2937;
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 2px;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .m-card-date-row {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 10.5px;
+    color: #6B7280;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* 🎯 NOTIFICATIONS - Justified Text Alignment */
+  .notification-item-card {
+    padding: 14px 16px !important;
+  }
+
+  .notification-body-text {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
+  }
+
+  /* 🎯 Fixed Mess Menu & All Card Headers */
   .card-header-row {
     display: flex !important;
     flex-direction: row !important;
@@ -1174,20 +1311,6 @@
   .priority-pill .dot {
     width: 7px !important;
     height: 7px !important;
-  }
-
-  /* Tables with Horizontal Scroll */
-  .table-responsive-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .table-container th,
-  .table-container td {
-    padding: 10px 12px;
-    font-size: 12px;
-    white-space: nowrap;
   }
 
   /* Mobile App Bottom Navigation Bar */

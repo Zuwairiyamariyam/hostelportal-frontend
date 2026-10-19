@@ -49,6 +49,38 @@ const DEFAULT_CATEGORIES = [
   { id: 9, name: 'General Query' }
 ];
 
+// 🎯 1. Display Label Formatter (Single-word symmetrical labels)
+const getStatusLabel = (status) => {
+  const s = status?.trim()?.toUpperCase()?.replace(/\s+/g, '_');
+  if (s === 'ACTION_TAKEN' || s === 'IN_PROGRESS') return 'ACTIVE';
+  if (s === 'UNDER_REVIEW') return 'REVIEW';
+  if (s === 'ACKNOWLEDGED' || s === 'SUBMITTED') return 'LOGGED';
+  if (s === 'RESOLVED') return 'RESOLVED';
+  if (s === 'REJECTED') return 'REJECTED';
+  return s?.replace(/_/g, ' ') || 'LOGGED';
+};
+
+// 🎨 2. Status Badge Color Styler
+const getStatusBadgeStyle = (status) => {
+  const s = status?.trim()?.toUpperCase()?.replace(/\s+/g, '_');
+  if (s === 'RESOLVED') {
+    return { backgroundColor: '#D1FAE5', color: '#065F46', border: '1px solid #A7F3D0' };
+  }
+  if (s === 'ACTION_TAKEN' || s === 'IN_PROGRESS' || s === 'ACTIVE') {
+    return { backgroundColor: '#DBEAFE', color: '#1E40AF', border: '1px solid #BFDBFE' };
+  }
+  if (s === 'REJECTED') {
+    return { backgroundColor: '#FEE2E2', color: '#991B1B', border: '1px solid #FECACA' };
+  }
+  if (s === 'SUBMITTED' || s === 'ACKNOWLEDGED' || s === 'LOGGED') {
+    return { backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A' };
+  }
+  if (s === 'UNDER_REVIEW' || s === 'REVIEW') {
+    return { backgroundColor: '#EDE9FE', color: '#5B21B6', border: '1px solid #DDD6FE' };
+  }
+  return { backgroundColor: '#F3F4F6', color: '#374151', border: '1px solid #E5E7EB' };
+};
+
 export default function StudentDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -516,42 +548,73 @@ export default function StudentDashboard() {
                   No complaints submitted yet. Everything looks good!
                 </p>
               ) : (
-                <div className="table-responsive-wrapper">
-                  <table className="table-container">
-                    <thead>
-                      <tr>
-                        <th>Complaint No</th>
-                        <th>Category</th>
-                        <th>Room</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {complaints.slice(0, 3).map(c => (
-                        <tr key={c.id}>
-                          <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
-                          <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
-                          <td>{c.roomNo}</td>
-                          <td>
-                            <span style={{ 
-                              fontSize: '11px', 
-                              fontWeight: 900, 
-                              color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
-                            }}>
-                              {c.priority}
-                            </span>
-                          </td>
-                          <td>
-                            <span className={`status-pill status-${c.status}`}>{c.status}</span>
-                          </td>
-                          <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                <>
+                  {/* 🖥️ DESKTOP VIEW: Clean Table */}
+                  <div className="desktop-table-view">
+                    <table className="table-container">
+                      <thead>
+                        <tr>
+                          <th>Complaint No</th>
+                          <th>Category</th>
+                          <th>Room</th>
+                          <th>Priority</th>
+                          <th>Status</th>
+                          <th>Date</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {complaints.slice(0, 3).map(c => (
+                          <tr key={c.id}>
+                            <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
+                            <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
+                            <td>{c.roomNo}</td>
+                            <td>
+                              <span style={{ 
+                                fontSize: '11px', 
+                                fontWeight: 900, 
+                                color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
+                              }}>
+                                {c.priority}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="status-pill" style={getStatusBadgeStyle(c.status)}>
+                                {getStatusLabel(c.status)}
+                              </span>
+                            </td>
+                            <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* 📱 MOBILE VIEW: Innovative App-Style Complaint Cards */}
+                  <div className="mobile-complaint-cards">
+                    {complaints.slice(0, 3).map(c => (
+                      <div key={c.id} className="mobile-complaint-card-item">
+                        <div className="m-card-top-row">
+                          <span className="m-card-cmp-no">#{c.complaintNumber}</span>
+                          <span className="status-pill" style={getStatusBadgeStyle(c.status)}>
+                            {getStatusLabel(c.status)}
+                          </span>
+                        </div>
+                        <div className="m-card-details-row">
+                          <span className="m-card-category">{getCategoryName(c.categoryId)}</span>
+                          <span className="m-card-bullet">•</span>
+                          <span className="m-card-room">Room {c.roomNo}</span>
+                          <span className="m-card-bullet">•</span>
+                          <span className="m-card-priority" style={{
+                            color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB'
+                          }}>{c.priority}</span>
+                        </div>
+                        <div className="m-card-date-row">
+                          <span>{new Date(c.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </>
@@ -570,34 +633,70 @@ export default function StudentDashboard() {
             {complaints.length === 0 ? (
               <p style={{ color: '#4B5563', padding: '20px 0', fontWeight: 600 }}>No complaints filed.</p>
             ) : (
-              <div className="table-responsive-wrapper">
-                <table className="table-container">
-                  <thead>
-                    <tr>
-                      <th>Complaint ID</th>
-                      <th>Category</th>
-                      <th>Description</th>
-                      <th>Priority</th>
-                      <th>Status</th>
-                      <th>Created At</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {complaints.map(c => (
-                      <tr key={c.id}>
-                        <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
-                        <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
-                        <td style={{ maxWidth: '300px' }}>{c.description}</td>
-                        <td style={{ fontWeight: 800 }}>{c.priority}</td>
-                        <td>
-                          <span className={`status-pill status-${c.status}`}>{c.status}</span>
-                        </td>
-                        <td>{new Date(c.createdAt).toLocaleString()}</td>
+              <>
+                {/* 🖥️ DESKTOP VIEW: Table */}
+                <div className="desktop-table-view">
+                  <table className="table-container">
+                    <thead>
+                      <tr>
+                        <th>Complaint ID</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Created At</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {complaints.map(c => (
+                        <tr key={c.id}>
+                          <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
+                          <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
+                          <td style={{ maxWidth: '300px' }}>{c.description}</td>
+                          <td style={{ fontWeight: 800 }}>{c.priority}</td>
+                          <td>
+                            <span className="status-pill" style={getStatusBadgeStyle(c.status)}>
+                              {getStatusLabel(c.status)}
+                            </span>
+                          </td>
+                          <td>{new Date(c.createdAt).toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* 📱 MOBILE VIEW: Full Innovative Complaint Cards */}
+                <div className="mobile-complaint-cards">
+                  {complaints.map(c => (
+                    <div key={c.id} className="mobile-complaint-card-item">
+                      <div className="m-card-top-row">
+                        <span className="m-card-cmp-no">#{c.complaintNumber}</span>
+                        <span className="status-pill" style={getStatusBadgeStyle(c.status)}>
+                          {getStatusLabel(c.status)}
+                        </span>
+                      </div>
+                      <div className="m-card-details-row">
+                        <span className="m-card-category">{getCategoryName(c.categoryId)}</span>
+                        <span className="m-card-bullet">•</span>
+                        <span className="m-card-room">Room {c.roomNo}</span>
+                        <span className="m-card-bullet">•</span>
+                        <span className="m-card-priority" style={{
+                          color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB'
+                        }}>{c.priority}</span>
+                      </div>
+                      {c.description && (
+                        <div className="m-card-desc-box">
+                          {c.description}
+                        </div>
+                      )}
+                      <div className="m-card-date-row">
+                        <span>{new Date(c.createdAt).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
@@ -722,15 +821,8 @@ export default function StudentDashboard() {
                               </span>
                             )}
                             {statusVal && (
-                              <span style={{ 
-                                fontSize: '10.5px', 
-                                fontWeight: 900, 
-                                backgroundColor: '#E5E7EB', 
-                                color: '#111827', 
-                                padding: '2px 8px', 
-                                borderRadius: '8px' 
-                              }}>
-                                {statusVal}
+                              <span className="status-pill" style={{ fontSize: '11px', ...getStatusBadgeStyle(statusVal) }}>
+                                {getStatusLabel(statusVal)}
                               </span>
                             )}
                           </div>
@@ -745,7 +837,7 @@ export default function StudentDashboard() {
                         )}
                       </div>
 
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#111827', marginTop: '2px' }}>
+                      <div className="notification-body-text">
                         {bodyPart}
                       </div>
 
