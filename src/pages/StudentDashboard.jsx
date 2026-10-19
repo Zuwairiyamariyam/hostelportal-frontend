@@ -274,7 +274,8 @@ export default function StudentDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
     navigate('/');
   };
 
@@ -322,7 +323,7 @@ export default function StudentDashboard() {
   return (
     <div className="dashboard-container">
       
-      {/* Left Sidebar */}
+      {/* Left Sidebar (Desktop View) */}
       <aside className="sidebar">
         <div>
           <div className="sidebar-header">
@@ -386,15 +387,22 @@ export default function StudentDashboard() {
             <h1>Welcome, {student.name ? student.name.split(' ')[0] : 'Student'} 👋</h1>
           </div>
 
-          <div className="helpline-pill">
-            <div className="helpline-icon-wrap">
-              <PhoneCall size={16} />
+          <div className="topbar-right-cluster">
+            <div className="helpline-pill">
+              <div className="helpline-icon-wrap">
+                <PhoneCall size={16} />
+              </div>
+              <div className="helpline-text">
+                <span className="helpline-label">Hostel Desk</span>
+                <span className="helpline-number">94431 82400</span>
+              </div>
+              <span className="helpline-active-dot" title="Desk Active 24x7"></span>
             </div>
-            <div className="helpline-text">
-              <span className="helpline-label">Hostel Desk</span>
-              <span className="helpline-number">94431 82400</span>
-            </div>
-            <span className="helpline-active-dot" title="Desk Active 24x7"></span>
+
+            {/* Mobile-only Logout button on top */}
+            <button className="mobile-header-logout" onClick={handleLogout} title="Logout">
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
 
@@ -491,7 +499,7 @@ export default function StudentDashboard() {
 
             </div>
 
-            {/* Recent Complaints Summary with Category Column */}
+            {/* Recent Complaints Summary */}
             <div className="card">
               <div className="card-header-row">
                 <h3><AlertCircle size={18} color="#7A1424" /> Recent Grievances</h3>
@@ -508,89 +516,93 @@ export default function StudentDashboard() {
                   No complaints submitted yet. Everything looks good!
                 </p>
               ) : (
-                <table className="table-container">
-                  <thead>
-                    <tr>
-                      <th>Complaint No</th>
-                      <th>Category</th>
-                      <th>Room</th>
-                      <th>Priority</th>
-                      <th>Status</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {complaints.slice(0, 3).map(c => (
-                      <tr key={c.id}>
-                        <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
-                        <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
-                        <td>{c.roomNo}</td>
-                        <td>
-                          <span style={{ 
-                            fontSize: '11px', 
-                            fontWeight: 900, 
-                            color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
-                          }}>
-                            {c.priority}
-                          </span>
-                        </td>
-                        <td>
-                          <span className={`status-pill status-${c.status}`}>{c.status}</span>
-                        </td>
-                        <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                <div className="table-responsive-wrapper">
+                  <table className="table-container">
+                    <thead>
+                      <tr>
+                        <th>Complaint No</th>
+                        <th>Category</th>
+                        <th>Room</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Date</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {complaints.slice(0, 3).map(c => (
+                        <tr key={c.id}>
+                          <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
+                          <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
+                          <td>{c.roomNo}</td>
+                          <td>
+                            <span style={{ 
+                              fontSize: '11px', 
+                              fontWeight: 900, 
+                              color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
+                            }}>
+                              {c.priority}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={`status-pill status-${c.status}`}>{c.status}</span>
+                          </td>
+                          <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </>
         )}
 
-        {/* TAB 2: MY COMPLAINTS with Category Column */}
+        {/* TAB 2: MY COMPLAINTS */}
         {activeTab === 'complaints' && (
           <div className="card">
-            <div className="card-header-row">
+            <div className="card-header-row compact-action-header">
               <h3><FileText size={18} color="#7A1424" /> My Complaints History</h3>
-              <button className="raise-complaint-btn" onClick={() => { setShowModal(true); setDropdownOpen(false); }} style={{ padding: '8px 18px', fontSize: '12px' }}>
-                <PlusCircle size={14} /> Raise New
+              <button className="raise-complaint-btn compact-raise-btn" onClick={() => { setShowModal(true); setDropdownOpen(false); }}>
+                <PlusCircle size={14} /> <span>Raise New</span>
               </button>
             </div>
 
             {complaints.length === 0 ? (
               <p style={{ color: '#4B5563', padding: '20px 0', fontWeight: 600 }}>No complaints filed.</p>
             ) : (
-              <table className="table-container">
-                <thead>
-                  <tr>
-                    <th>Complaint ID</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Created At</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complaints.map(c => (
-                    <tr key={c.id}>
-                      <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
-                      <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
-                      <td style={{ maxWidth: '300px' }}>{c.description}</td>
-                      <td style={{ fontWeight: 800 }}>{c.priority}</td>
-                      <td>
-                        <span className={`status-pill status-${c.status}`}>{c.status}</span>
-                      </td>
-                      <td>{new Date(c.createdAt).toLocaleString()}</td>
+              <div className="table-responsive-wrapper">
+                <table className="table-container">
+                  <thead>
+                    <tr>
+                      <th>Complaint ID</th>
+                      <th>Category</th>
+                      <th>Description</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Created At</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {complaints.map(c => (
+                      <tr key={c.id}>
+                        <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
+                        <td style={{ fontWeight: 800, color: '#111827' }}>{getCategoryName(c.categoryId)}</td>
+                        <td style={{ maxWidth: '300px' }}>{c.description}</td>
+                        <td style={{ fontWeight: 800 }}>{c.priority}</td>
+                        <td>
+                          <span className={`status-pill status-${c.status}`}>{c.status}</span>
+                        </td>
+                        <td>{new Date(c.createdAt).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         )}
 
-        {/* TAB 3: FACILITIES & MESS MENU (Modern 3x2 Balanced Layout) */}
+        {/* TAB 3: FACILITIES & MESS MENU */}
         {activeTab === 'facilities' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div className="card">
@@ -601,42 +613,34 @@ export default function StudentDashboard() {
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginTop: '10px' }}>
-                <div style={{ background: '#F8F9FA', border: '1.5px solid #E5E7EB', borderRadius: '14px', padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7A1424', fontWeight: 900, fontSize: '14px' }}>
-                    <Coffee size={16} /> BREAKFAST
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 700, margin: '4px 0 10px 0' }}>{messMenu.breakfast.time}</div>
-                  <p style={{ fontSize: '13px', color: '#111827', fontWeight: 700, margin: 0, lineHeight: 1.4 }}>{messMenu.breakfast.items}</p>
+              <div className="mess-menu-grid">
+                <div className="mess-menu-item">
+                  <div className="mess-header"><Coffee size={16} /> BREAKFAST</div>
+                  <div className="mess-time">{messMenu.breakfast.time}</div>
+                  <p className="mess-desc">{messMenu.breakfast.items}</p>
                 </div>
 
-                <div style={{ background: '#F8F9FA', border: '1.5px solid #E5E7EB', borderRadius: '14px', padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7A1424', fontWeight: 900, fontSize: '14px' }}>
-                    <Utensils size={16} /> LUNCH
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 700, margin: '4px 0 10px 0' }}>{messMenu.lunch.time}</div>
-                  <p style={{ fontSize: '13px', color: '#111827', fontWeight: 700, margin: 0, lineHeight: 1.4 }}>{messMenu.lunch.items}</p>
+                <div className="mess-menu-item">
+                  <div className="mess-header"><Utensils size={16} /> LUNCH</div>
+                  <div className="mess-time">{messMenu.lunch.time}</div>
+                  <p className="mess-desc">{messMenu.lunch.items}</p>
                 </div>
 
-                <div style={{ background: '#F8F9FA', border: '1.5px solid #E5E7EB', borderRadius: '14px', padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7A1424', fontWeight: 900, fontSize: '14px' }}>
-                    <Coffee size={16} /> EVENING SNACKS
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 700, margin: '4px 0 10px 0' }}>{messMenu.snacks.time}</div>
-                  <p style={{ fontSize: '13px', color: '#111827', fontWeight: 700, margin: 0, lineHeight: 1.4 }}>{messMenu.snacks.items}</p>
+                <div className="mess-menu-item">
+                  <div className="mess-header"><Coffee size={16} /> EVENING SNACKS</div>
+                  <div className="mess-time">{messMenu.snacks.time}</div>
+                  <p className="mess-desc">{messMenu.snacks.items}</p>
                 </div>
 
-                <div style={{ background: '#F8F9FA', border: '1.5px solid #E5E7EB', borderRadius: '14px', padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7A1424', fontWeight: 900, fontSize: '14px' }}>
-                    <Utensils size={16} /> DINNER
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 700, margin: '4px 0 10px 0' }}>{messMenu.dinner.time}</div>
-                  <p style={{ fontSize: '13px', color: '#111827', fontWeight: 700, margin: 0, lineHeight: 1.4 }}>{messMenu.dinner.items}</p>
+                <div className="mess-menu-item">
+                  <div className="mess-header"><Utensils size={16} /> DINNER</div>
+                  <div className="mess-time">{messMenu.dinner.time}</div>
+                  <p className="mess-desc">{messMenu.dinner.items}</p>
                 </div>
               </div>
             </div>
 
-            {/* Amenities Provided Card (3x2 Balanced Grid) */}
+            {/* Amenities Provided Card */}
             <div className="card">
               <div className="card-header-row">
                 <h3><CheckCircle size={18} color="#7A1424" /> Amenities Provided</h3>
@@ -667,7 +671,7 @@ export default function StudentDashboard() {
           </div>
         )}
 
-        {/* TAB 4: NOTIFICATIONS with Category & Status Badges */}
+        {/* TAB 4: NOTIFICATIONS */}
         {activeTab === 'notifications' && (
           <div className="card">
             <div className="card-header-row">
@@ -684,7 +688,6 @@ export default function StudentDashboard() {
                   const headerPart = hasDetails ? n.message.split('::')[0] : '';
                   const bodyPart = hasDetails ? n.message.split('::')[1] : n.message;
 
-                  // Parse components: #CMP-XXXX • Category • Status
                   const headerTokens = headerPart ? headerPart.split('•').map(t => t.trim()) : [];
                   const cmpNo = headerTokens[0] || '';
                   const catName = headerTokens.length === 3 ? headerTokens[1] : '';
@@ -693,14 +696,10 @@ export default function StudentDashboard() {
                   return (
                     <div 
                       key={n.id} 
+                      className="notification-item-card"
                       style={{ 
-                        padding: '16px 20px', 
-                        borderRadius: '14px', 
                         backgroundColor: n.isRead ? '#F9FAFB' : '#FDE8EB',
-                        borderLeft: n.isRead ? '4px solid #9CA3AF' : '4px solid #7A1424',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '6px'
+                        borderLeft: n.isRead ? '4px solid #9CA3AF' : '4px solid #7A1424'
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -763,7 +762,45 @@ export default function StudentDashboard() {
 
       </main>
 
-      {/* Modal with Symmetrical Category Names */}
+      {/* 📱 MODERN FLOATING BOTTOM NAVIGATION BAR */}
+      <nav className="mobile-bottom-nav">
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'overview' ? 'active' : ''}`}
+          onClick={() => handleTabChange('overview')}
+        >
+          <Home size={20} />
+          <span>Home</span>
+        </button>
+
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'complaints' ? 'active' : ''}`}
+          onClick={() => handleTabChange('complaints')}
+        >
+          <FileText size={20} />
+          <span>Requests</span>
+        </button>
+
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'facilities' ? 'active' : ''}`}
+          onClick={() => handleTabChange('facilities')}
+        >
+          <Utensils size={20} />
+          <span>Services</span>
+        </button>
+
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'notifications' ? 'active' : ''}`}
+          onClick={() => handleTabChange('notifications')}
+        >
+          <div className="mobile-icon-badge-wrap">
+            <Bell size={20} />
+            {unreadCount > 0 && <span className="mobile-badge-dot"></span>}
+          </div>
+          <span>Updates</span>
+        </button>
+      </nav>
+
+      {/* Raise Complaint Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">

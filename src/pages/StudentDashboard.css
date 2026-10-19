@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap');
 
-/* Dashboard Main Layout - Pazhaya Original System Font Restored */
+/* Dashboard Main Layout */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -10,10 +10,11 @@
   color: #111827;
   overflow-x: hidden;
   overflow-y: auto;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 /* ============================================================ */
-/* 🌟 SIDEBAR - ONLY SIDEBAR GETS ELEGANT OUTFIT FONT */
+/* 🌟 SIDEBAR - DESKTOP VIEW */
 /* ============================================================ */
 .sidebar {
   width: 260px;
@@ -30,7 +31,7 @@
   z-index: 50;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
   box-sizing: border-box;
-  font-family: 'Outfit', sans-serif; /* Sidebar-kku mattum unique font */
+  font-family: 'Outfit', sans-serif;
 }
 
 .sidebar-header {
@@ -68,7 +69,6 @@
   letter-spacing: 0.4px;
 }
 
-/* Nav Items Container */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -77,7 +77,6 @@
   flex-grow: 1;
 }
 
-/* Uniform nav item with beautiful letter breathing room */
 .nav-item {
   display: flex;
   align-items: center;
@@ -104,13 +103,12 @@
   width: 20px;
 }
 
-/* 🎯 Beautiful Elegant Title Case with Letter Spacing */
 .nav-label {
   flex-grow: 1;
   white-space: nowrap;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: 1.2px; /* O v e r v i e w crisp aesthetic gap */
+  letter-spacing: 1.2px;
 }
 
 .nav-item:hover {
@@ -118,7 +116,6 @@
   color: #ffffff;
 }
 
-/* Active State with subtle glow line */
 .nav-item.active {
   background-color: rgba(255, 255, 255, 0.13);
   color: #ffffff;
@@ -154,7 +151,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Logout Button */
 .logout-btn {
   display: flex;
   align-items: center;
@@ -180,7 +176,8 @@
 }
 
 /* ============================================================ */
-/* Main Content Wrapper */
+/* Main Content Wrapper - Desktop */
+/* ============================================================ */
 .main-wrapper {
   margin-left: 260px;
   flex-grow: 1;
@@ -204,6 +201,16 @@
   font-weight: 900;
   color: #7A1424;
   margin: 0;
+}
+
+.topbar-right-cluster {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mobile-header-logout {
+  display: none;
 }
 
 /* Top-Right Helpline Pill */
@@ -298,6 +305,9 @@
   gap: 8px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   transition: opacity 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none;
 }
 
 .raise-complaint-btn:hover {
@@ -443,6 +453,45 @@
   font-size: 14px;
 }
 
+/* Mess Menu 4-column layout */
+.mess-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.mess-menu-item {
+  background: #F8F9FA;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.mess-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7A1424;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.mess-time {
+  font-size: 11px;
+  color: #6B7280;
+  font-weight: 700;
+  margin: 4px 0 10px 0;
+}
+
+.mess-desc {
+  font-size: 13px;
+  color: #111827;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.4;
+}
+
 /* 3x2 Static Amenities Grid */
 .amenities-grid-3x2 {
   display: grid;
@@ -566,6 +615,18 @@
   font-weight: 600;
 }
 
+.notification-item-card {
+  padding: 16px 20px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mobile-bottom-nav {
+  display: none;
+}
+
 /* Modal Styling */
 .modal-overlay {
   position: fixed;
@@ -622,6 +683,7 @@
   font-weight: 800;
   color: #4B5563;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .dot {
@@ -685,6 +747,7 @@
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(122, 20, 36, 0.25);
   transition: opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .modal-submit-btn:hover {
@@ -712,6 +775,7 @@
   box-sizing: border-box;
   transition: all 0.2s ease;
   user-select: none;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .custom-select-trigger:hover,
@@ -755,6 +819,7 @@
   cursor: pointer;
   background-color: transparent;
   transition: background-color 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .custom-dropdown-item.active-text {
@@ -767,32 +832,426 @@
   color: #7A1424;
 }
 
-@media (max-width: 1024px) {
+/* ============================================================ */
+/* 📱 EXCLUSIVE MOBILE RESPONSIVE ENGINE (<= 768px Phones) */
+/* ============================================================ */
+@media (max-width: 1024px) and (min-width: 769px) {
   .amenities-grid-3x2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mess-menu-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
   .sidebar {
-    display: none;
+    display: none !important;
   }
+
   .main-wrapper {
-    margin-left: 0;
-    padding: 20px;
+    margin-left: 0 !important;
+    padding: 16px 14px 84px 14px !important;
+    min-height: 100vh;
   }
-  .overview-grid {
-    grid-template-columns: 1fr;
-  }
-  .amenities-grid-3x2 {
-    grid-template-columns: 1fr;
-  }
-  .priority-pill-group {
-    flex-direction: column;
-  }
+
+  /* 🎯 RESTORED COMPACT SINGLE-ROW TOPBAR: Left Welcome + Right Helpline & Logout */
   .topbar {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 20px !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  /* Left Side: Welcome Student Name */
+  .topbar-title {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .topbar-title h1 {
+    font-size: 17.5px !important; /* Compact balanced font to stay on left */
+    font-weight: 900 !important;
+    color: #7A1424 !important;
+    letter-spacing: -0.2px !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Right Side: Helpline Pill + Circular Logout */
+  .topbar-right-cluster {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .helpline-pill {
+    padding: 5px 10px !important;
+    gap: 6px !important;
+    border-radius: 30px !important;
+  }
+
+  .helpline-icon-wrap {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .helpline-icon-wrap svg {
+    width: 11px !important;
+    height: 11px !important;
+  }
+
+  .helpline-label {
+    font-size: 8px !important;
+    line-height: 1 !important;
+  }
+
+  .helpline-number {
+    font-size: 10.5px !important;
+    line-height: 1.1 !important;
+  }
+
+  .mobile-header-logout {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    background-color: #ffffff !important;
+    border: 1.5px solid #D1D5DB !important;
+    color: #7A1424 !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    -webkit-tap-highlight-color: transparent !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-header-logout svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* 🔹 Compact Action Banner */
+  .action-banner {
+    padding: 20px 18px;
+    border-radius: 18px;
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .action-banner h2 {
+    font-size: 17px;
+  }
+
+  .action-banner p {
+    font-size: 12px;
+  }
+
+  .raise-complaint-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 11px 20px;
+    font-size: 13.5px;
+    -webkit-tap-highlight-color: transparent !important;
+    user-select: none;
+    outline: none;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .card {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+/* 🔹 My Details Box: Symmetrical Padding & Independent Column Controls */
+  .details-card-body {
+    grid-template-columns: 1fr 1fr !important;
+    width: 100%;
+  }
+
+  .detail-field {
+    min-width: 0;
+  }
+
+  /* Left side-ah mattum nagatha */
+.details-card-body > .detail-field:nth-child(odd) .detail-field-title,
+.details-card-body > .detail-field:nth-child(odd) .detail-field-value {
+  transform: translateX(4px) !important; /* Plus number kudutha right-ku nagarum, minus (-4px) kudutha left-ku nagarum */
+}
+
+/* Right side-ah mattum nagatha */
+.details-card-body > .detail-field:nth-child(even) .detail-field-title,
+.details-card-body > .detail-field:nth-child(even) .detail-field-value {
+  transform: translateX(20px) !important; /* Plus number kudutha right-ku nagarum, minus (-10px) kudutha left-ku nagarum */
+}
+
+  .detail-field-title {
+    font-size: 11.5px;
+  }
+
+  .detail-field-value {
+    font-size: 13.5px;
+  }
+
+  .department-value {
+    font-size: 12px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+
+  /* 🔹 Complaints Header: Single Line Header with Compact 'Raise New' Button */
+  .card-header-row.compact-action-header {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 10px;
+    flex-wrap: nowrap !important;
+  }
+
+  .card-header-row.compact-action-header h3 {
+    font-size: 14.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .raise-complaint-btn.compact-raise-btn {
+    width: auto !important;
+    padding: 6px 14px !important;
+    font-size: 11.5px !important;
+    border-radius: 20px !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .raise-complaint-btn.compact-raise-btn svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  /* 🎯 FIXED MESS MENU & ALL CARD HEADERS: Fits perfectly on a single line on all screen sizes */
+  .card-header-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .card-header-row h3 {
+    font-size: 13px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin: 0 !important;
+  }
+
+  .card-header-row h3 svg {
+    width: 15px !important;
+    height: 15px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .card-header-row span {
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 🔹 Mess Menu: 2 Columns x 2 Rows */
+  .mess-menu-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .mess-menu-item {
+    padding: 14px 12px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+
+  .mess-header {
+    font-size: 11.5px !important;
+    gap: 6px;
+  }
+
+  .mess-time {
+    font-size: 10px !important;
+    margin: 3px 0 8px 0 !important;
+  }
+
+  .mess-desc {
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* 🔹 Amenities: 2 Columns x 3 Rows */
+  .amenities-grid-3x2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .amenity-card-3x2 {
+    padding: 14px 12px !important;
+    min-height: 94px !important;
+    border-radius: 14px;
+  }
+
+  .amenity-card-top {
+    margin-bottom: 8px !important;
+  }
+
+  .amenity-icon-box {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 10px !important;
+  }
+
+  .amenity-icon-box svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .amenity-tag-badge {
+    font-size: 9.5px !important;
+    padding: 2px 6px !important;
+  }
+
+  .amenity-title {
+    font-size: 12.5px !important;
+    line-height: 1.25 !important;
+  }
+
+  .amenity-desc {
+    display: none !important;
+  }
+
+  /* 🔹 Priority Pills: Horizontal Row Equal Fit */
+  .priority-pill-group {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    width: 100%;
+  }
+
+  .priority-pill {
+    flex: 1 !important;
+    height: 42px !important;
+    padding: 0 4px !important;
+    font-size: 11.5px !important;
+    border-radius: 12px !important;
+    gap: 5px !important;
+    box-sizing: border-box;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .priority-pill .dot {
+    width: 7px !important;
+    height: 7px !important;
+  }
+
+  /* Tables with Horizontal Scroll */
+  .table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-container th,
+  .table-container td {
+    padding: 10px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* Mobile App Bottom Navigation Bar */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 12px;
+    left: 14px;
+    right: 14px;
+    height: 60px;
+    background: #6B111F;
+    border-radius: 35px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    z-index: 99;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .mobile-nav-btn {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #F8C3CD;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent !important;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-btn span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .mobile-nav-btn.active {
+    color: #7A1424 !important;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-icon-badge-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-badge-dot {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    width: 7px;
+    height: 7px;
+    background-color: #EF4444;
+    border-radius: 50%;
+    border: 1.5px solid #6B111F;
   }
 }

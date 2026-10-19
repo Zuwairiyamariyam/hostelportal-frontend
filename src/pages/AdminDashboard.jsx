@@ -42,13 +42,9 @@ export default function AdminDashboard() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 🎯 Permanent Seen Resolutions Tracker (Persists even across logouts)
-  const [seenResolvedIds, setSeenResolvedIds] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('admin_permanent_seen_resolved_ids') || '[]');
-    } catch {
-      return [];
-    }
+  // 🎯 Track seen resolutions count (Persists permanently like Student Notifications)
+  const [seenResolvedCount, setSeenResolvedCount] = useState(() => {
+    return Number(localStorage.getItem('admin_seen_resolved_count') || 0);
   });
 
   // Status Update Modal State
@@ -57,26 +53,16 @@ export default function AdminDashboard() {
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [adminRemark, setAdminRemark] = useState('');
 
-  const markResolutionsAsSeen = (allComplaints) => {
-    const resolvedIds = (allComplaints || complaints)
-      .filter(c => c.status === 'RESOLVED')
-      .map(c => c.id);
-
-    setSeenResolvedIds(prev => {
-      const merged = Array.from(new Set([...prev, ...resolvedIds]));
-      localStorage.setItem('admin_permanent_seen_resolved_ids', JSON.stringify(merged));
-      return merged;
-    });
-  };
-
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setSearchQuery('');
     localStorage.setItem('admin_active_tab', tabName);
 
-    // Once Resolutions tab is opened, permanently mark all current resolved issues as seen
+    // Once Resolutions tab is opened, mark all currently resolved complaints as seen
     if (tabName === 'resolved') {
-      markResolutionsAsSeen(complaints);
+      const currentResolved = complaints.filter(c => c.status === 'RESOLVED').length;
+      setSeenResolvedCount(currentResolved);
+      localStorage.setItem('admin_seen_resolved_count', currentResolved.toString());
     }
   };
 
@@ -92,9 +78,11 @@ export default function AdminDashboard() {
           const fetchedComplaints = resCmp.value.data || [];
           setComplaints(fetchedComplaints);
 
-          // If already in resolutions tab, keep it marked seen
+          // If currently inside resolutions tab, keep it marked seen
           if (activeTab === 'resolved') {
-            markResolutionsAsSeen(fetchedComplaints);
+            const currentResolved = fetchedComplaints.filter(c => c.status === 'RESOLVED').length;
+            setSeenResolvedCount(currentResolved);
+            localStorage.setItem('admin_seen_resolved_count', currentResolved.toString());
           }
         }
         if (resStd.status === 'fulfilled' && Array.isArray(resStd.value.data)) {
@@ -115,7 +103,7 @@ export default function AdminDashboard() {
     fetchAdminData();
   }, [navigate]);
 
-  // Full Page Refresh (Remembers active tab and seen count permanently)
+  // Full Page Refresh
   const handleFullPageRefresh = () => {
     localStorage.setItem('admin_active_tab', activeTab);
     window.location.reload();
@@ -192,10 +180,8 @@ export default function AdminDashboard() {
   const resolvedList = complaints.filter(c => c.status === 'RESOLVED');
   const pendingQueue = complaints.filter(c => c.status !== 'RESOLVED');
 
-  // 🎯 Calculate genuine unread resolutions by ID comparison
-  const unreadResolutionsCount = useMemo(() => {
-    return resolvedList.filter(c => !seenResolvedIds.includes(c.id)).length;
-  }, [resolvedList, seenResolvedIds]);
+  // 🎯 Calculate genuine unread resolution count
+  const unreadResolutionsCount = Math.max(0, resolvedList.length - seenResolvedCount);
 
   const handleStatusUpdate = async (e) => {
     e.preventDefault();
@@ -218,7 +204,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // 🎯 Safe Logout: Never deletes seen resolution history
+  // 🎯 Clean Logout: Clears login credentials but preserves seen resolution count
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('role');
@@ -278,7 +264,7 @@ export default function AdminDashboard() {
             >
               <span className="nav-icon"><FileCheck2 size={18} /></span>
               <span className="nav-label">Resolutions</span>
-              {/* Shows only genuine new unread resolved tickets */}
+              {/* Badge count will permanently stay cleared once viewed */}
               {unreadResolutionsCount > 0 && activeTab !== 'resolved' && (
                 <span className="badge-count" style={{ backgroundColor: '#059669' }}>
                   {unreadResolutionsCount}
