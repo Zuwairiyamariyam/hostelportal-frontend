@@ -42,7 +42,7 @@ export default function AdminDashboard() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 🎯 Track seen resolutions count (Persists permanently like Student Notifications)
+  // 🎯 Track seen resolutions count
   const [seenResolvedCount, setSeenResolvedCount] = useState(() => {
     return Number(localStorage.getItem('admin_seen_resolved_count') || 0);
   });
@@ -58,7 +58,6 @@ export default function AdminDashboard() {
     setSearchQuery('');
     localStorage.setItem('admin_active_tab', tabName);
 
-    // Once Resolutions tab is opened, mark all currently resolved complaints as seen
     if (tabName === 'resolved') {
       const currentResolved = complaints.filter(c => c.status === 'RESOLVED').length;
       setSeenResolvedCount(currentResolved);
@@ -78,7 +77,6 @@ export default function AdminDashboard() {
           const fetchedComplaints = resCmp.value.data || [];
           setComplaints(fetchedComplaints);
 
-          // If currently inside resolutions tab, keep it marked seen
           if (activeTab === 'resolved') {
             const currentResolved = fetchedComplaints.filter(c => c.status === 'RESOLVED').length;
             setSeenResolvedCount(currentResolved);
@@ -103,7 +101,6 @@ export default function AdminDashboard() {
     fetchAdminData();
   }, [navigate]);
 
-  // Full Page Refresh
   const handleFullPageRefresh = () => {
     localStorage.setItem('admin_active_tab', activeTab);
     window.location.reload();
@@ -124,7 +121,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Boys Students List (A-Z Sorted)
   const boysStudents = useMemo(() => {
     return students
       .filter(s => {
@@ -135,7 +131,6 @@ export default function AdminDashboard() {
       .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   }, [students]);
 
-  // Girls Students List (A-Z Sorted)
   const girlsStudents = useMemo(() => {
     return students
       .filter(s => {
@@ -146,7 +141,6 @@ export default function AdminDashboard() {
       .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   }, [students]);
 
-  // Unique Rooms calculation
   const roomGroups = useMemo(() => {
     const groups = {};
     students.forEach(s => {
@@ -163,7 +157,6 @@ export default function AdminDashboard() {
   const boysRoomsCount = Object.keys(roomGroups).filter(r => r.toUpperCase().startsWith('BH')).length || 16;
   const girlsRoomsCount = Object.keys(roomGroups).filter(r => r.toUpperCase().startsWith('LH')).length || 8;
 
-  // Filtered Lists by Search
   const filteredBoys = boysStudents.filter(s => 
     (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
     (s.rollNo || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -176,11 +169,8 @@ export default function AdminDashboard() {
     (s.roomNo || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Resolved & Pending Grievances
   const resolvedList = complaints.filter(c => c.status === 'RESOLVED');
   const pendingQueue = complaints.filter(c => c.status !== 'RESOLVED');
-
-  // 🎯 Calculate genuine unread resolution count
   const unreadResolutionsCount = Math.max(0, resolvedList.length - seenResolvedCount);
 
   const handleStatusUpdate = async (e) => {
@@ -204,7 +194,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // 🎯 Clean Logout: Clears login credentials but preserves seen resolution count
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('role');
@@ -214,7 +203,7 @@ export default function AdminDashboard() {
   return (
     <div className="dashboard-container">
       
-      {/* Admin Sidebar */}
+      {/* Admin Sidebar (Desktop) */}
       <aside className="sidebar">
         <div>
           <div className="sidebar-header">
@@ -264,7 +253,6 @@ export default function AdminDashboard() {
             >
               <span className="nav-icon"><FileCheck2 size={18} /></span>
               <span className="nav-label">Resolutions</span>
-              {/* Badge count will permanently stay cleared once viewed */}
               {unreadResolutionsCount > 0 && activeTab !== 'resolved' && (
                 <span className="badge-count" style={{ backgroundColor: '#059669' }}>
                   {unreadResolutionsCount}
@@ -285,19 +273,25 @@ export default function AdminDashboard() {
         <div className="topbar">
           <div className="topbar-title">
             <h1>Hostel Administration Desk</h1>
-            <p style={{ margin: '4px 0 0 0', color: '#6B7280', fontSize: '13px', fontWeight: 600 }}>
+            <p className="topbar-subtitle">
               Live portal monitoring, hostel room allotments, student records, and grievance management.
             </p>
           </div>
 
-          <button 
-            type="button"
-            onClick={handleFullPageRefresh} 
-            className="admin-refresh-btn"
-          >
-            <RefreshCw size={15} />
-            <span>Refresh</span>
-          </button>
+          <div className="topbar-right-cluster">
+            <button 
+              type="button"
+              onClick={handleFullPageRefresh} 
+              className="admin-refresh-btn"
+            >
+              <RefreshCw size={15} />
+              <span>Refresh</span>
+            </button>
+
+            <button className="mobile-header-logout" onClick={handleLogout} title="Logout">
+              <LogOut size={16} />
+            </button>
+          </div>
         </div>
 
         {/* ============================================================ */}
@@ -305,53 +299,45 @@ export default function AdminDashboard() {
         {/* ============================================================ */}
         {activeTab === 'overview' && (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '18px', marginBottom: '28px' }}>
+            <div className="admin-stats-grid">
               
-              <div className="card" style={{ padding: '20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#6B7280', fontSize: '11px', letterSpacing: '0.8px' }}>TOTAL STUDENTS</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#111827' }}>{students.length || stats.totalStudents}</h2>
-                  </div>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#FDE8EB', color: '#7A1424', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Users size={24} />
-                  </div>
+              <div className="card admin-stat-card">
+                <div>
+                  <small>TOTAL STUDENTS</small>
+                  <h2>{students.length || stats.totalStudents}</h2>
+                </div>
+                <div className="admin-stat-icon red-theme">
+                  <Users size={22} />
                 </div>
               </div>
 
-              <div className="card" style={{ padding: '20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#6B7280', fontSize: '11px', letterSpacing: '0.8px' }}>ALLOCATED ROOMS</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#111827' }}>{totalCalculatedRooms}</h2>
-                  </div>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#FDE8EB', color: '#7A1424', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <DoorClosed size={24} />
-                  </div>
+              <div className="card admin-stat-card">
+                <div>
+                  <small>ALLOCATED ROOMS</small>
+                  <h2>{totalCalculatedRooms}</h2>
+                </div>
+                <div className="admin-stat-icon red-theme">
+                  <DoorClosed size={22} />
                 </div>
               </div>
 
-              <div className="card" style={{ padding: '20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#92400E', fontSize: '11px', letterSpacing: '0.8px' }}>PENDING TICKETS</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#D97706' }}>{pendingQueue.length}</h2>
-                  </div>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#FEF3C7', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Clock size={24} />
-                  </div>
+              <div className="card admin-stat-card">
+                <div>
+                  <small>PENDING TICKETS</small>
+                  <h2 style={{ color: '#D97706' }}>{pendingQueue.length}</h2>
+                </div>
+                <div className="admin-stat-icon yellow-theme">
+                  <Clock size={22} />
                 </div>
               </div>
 
-              <div className="card" style={{ padding: '20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#065F46', fontSize: '11px', letterSpacing: '0.8px' }}>RESOLVED ISSUES</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#059669' }}>{resolvedList.length}</h2>
-                  </div>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#D1FAE5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <CheckCircle2 size={24} />
-                  </div>
+              <div className="card admin-stat-card">
+                <div>
+                  <small>RESOLVED ISSUES</small>
+                  <h2 style={{ color: '#059669' }}>{resolvedList.length}</h2>
+                </div>
+                <div className="admin-stat-icon green-theme">
+                  <CheckCircle2 size={22} />
                 </div>
               </div>
 
@@ -368,59 +354,97 @@ export default function AdminDashboard() {
                   {initialLoading ? '' : 'All grievances resolved! The hostel is running smoothly.'}
                 </p>
               ) : (
-                <table className="table-container">
-                  <thead>
-                    <tr>
-                      <th>CMP ID</th>
-                      <th>Room</th>
-                      <th>Description</th>
-                      <th>Priority</th>
-                      <th>Status</th>
-                      <th>Submitted At</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <>
+                  {/* 🖥️ DESKTOP TABLE VIEW */}
+                  <div className="desktop-table-view">
+                    <table className="table-container">
+                      <thead>
+                        <tr>
+                          <th>CMP ID</th>
+                          <th>Room</th>
+                          <th>Description</th>
+                          <th>Priority</th>
+                          <th>Status</th>
+                          <th>Submitted At</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pendingQueue.map(c => (
+                          <tr key={c.id}>
+                            <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
+                            <td style={{ fontWeight: 800 }}>{c.roomNo}</td>
+                            <td style={{ maxWidth: '320px' }}>{c.description}</td>
+                            <td>
+                              <span style={{ 
+                                fontSize: '11px', 
+                                fontWeight: 900,
+                                color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
+                              }}>
+                                {c.priority}
+                              </span>
+                            </td>
+                            <td>
+                              <span className={`status-pill status-${c.status}`}>{c.status}</span>
+                            </td>
+                            <td style={{ color: '#4B5563', fontSize: '12.5px' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                            <td>
+                              <button 
+                                onClick={() => { setSelectedComplaint(c); setNewStatus(c.status); setStatusDropdownOpen(false); }}
+                                style={{ 
+                                  padding: '7px 16px', 
+                                  borderRadius: '10px', 
+                                  border: 'none', 
+                                  backgroundColor: '#7A1424', 
+                                  color: '#fff', 
+                                  fontWeight: 800, 
+                                  fontSize: '11.5px', 
+                                  cursor: 'pointer',
+                                  boxShadow: '0 2px 6px rgba(122, 20, 36, 0.25)'
+                                }}
+                              >
+                                Resolve →
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* 📱 MOBILE VIEW: Innovative App-Style Admin Grievance Cards */}
+                  <div className="mobile-admin-cards">
                     {pendingQueue.map(c => (
-                      <tr key={c.id}>
-                        <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
-                        <td style={{ fontWeight: 800 }}>{c.roomNo}</td>
-                        <td style={{ maxWidth: '320px' }}>{c.description}</td>
-                        <td>
-                          <span style={{ 
-                            fontSize: '11px', 
-                            fontWeight: 900,
-                            color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
-                          }}>
-                            {c.priority}
-                          </span>
-                        </td>
-                        <td>
+                      <div key={c.id} className="mobile-admin-card-item">
+                        <div className="m-card-top-row">
+                          <span className="m-card-cmp-no">#{c.complaintNumber}</span>
                           <span className={`status-pill status-${c.status}`}>{c.status}</span>
-                        </td>
-                        <td style={{ color: '#4B5563', fontSize: '12.5px' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
-                        <td>
+                        </div>
+                        <div className="m-card-details-row">
+                          <span className="m-card-room">Room {c.roomNo}</span>
+                          <span className="m-card-bullet">•</span>
+                          <span className="m-card-priority" style={{
+                            color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB'
+                          }}>{c.priority}</span>
+                        </div>
+                        {c.description && (
+                          <div className="m-card-desc-box">
+                            {c.description}
+                          </div>
+                        )}
+                        <div className="m-card-action-row">
+                          <span className="m-card-date">{new Date(c.createdAt).toLocaleDateString()}</span>
                           <button 
                             onClick={() => { setSelectedComplaint(c); setNewStatus(c.status); setStatusDropdownOpen(false); }}
-                            style={{ 
-                              padding: '7px 16px', 
-                              borderRadius: '10px', 
-                              border: 'none', 
-                              backgroundColor: '#7A1424', 
-                              color: '#fff', 
-                              fontWeight: 800, 
-                              fontSize: '11.5px', 
-                              cursor: 'pointer',
-                              boxShadow: '0 2px 6px rgba(122, 20, 36, 0.25)'
-                            }}
+                            className="mobile-resolve-btn"
                           >
                             Resolve →
                           </button>
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                </>
               )}
             </div>
           </>
@@ -432,106 +456,130 @@ export default function AdminDashboard() {
         {activeTab === 'boys' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '18px' }}>
-              <div className="card" style={{ padding: '18px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#6B7280', fontSize: '11px', letterSpacing: '0.8px' }}>TOTAL BOYS STUDENTS</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#111827' }}>{boysStudents.length}</h2>
-                  </div>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#DBEAFE', color: '#1E40AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Users size={24} />
-                  </div>
+            <div className="admin-stats-grid-2">
+              <div className="card admin-stat-card">
+                <div>
+                  <small>TOTAL BOYS</small>
+                  <h2>{boysStudents.length}</h2>
+                </div>
+                <div className="admin-stat-icon blue-theme">
+                  <Users size={22} />
                 </div>
               </div>
 
-              <div className="card" style={{ padding: '18px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#6B7280', fontSize: '11px', letterSpacing: '0.8px' }}>BOYS HOSTEL ROOMS</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#111827' }}>{boysRoomsCount}</h2>
-                  </div>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#FDE8EB', color: '#7A1424', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <DoorClosed size={24} />
-                  </div>
+              <div className="card admin-stat-card">
+                <div>
+                  <small>OCCUPIED ROOMS</small>
+                  <h2>{boysRoomsCount}</h2>
+                </div>
+                <div className="admin-stat-icon red-theme">
+                  <DoorClosed size={22} />
                 </div>
               </div>
             </div>
 
             <div className="card">
-              <div className="card-header-row" style={{ alignItems: 'center' }}>
+              <div className="card-header-row boys-header-flex">
                 <h3 style={{ margin: 0 }}>
-                  <Building size={18} color="#7A1424" /> Boys Hostel Residents Directory
+                  <Building size={18} color="#7A1424" /> Boys Hostel Directory
                 </h3>
 
                 <div className="clean-search-box-wrap">
                   <Search size={15} color="#9CA3AF" />
                   <input 
                     type="text"
-                    placeholder="Search by student name, roll number, or room"
+                    placeholder="Search name, roll no, room"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
               </div>
 
-              <table className="table-container table-with-vertical-lines">
-                <thead>
-                  <tr>
-                    <th>STUDENT NAME</th>
-                    <th>REGISTER NO</th>
-                    <th>ALLOTTED ROOM</th>
-                    <th>JOINING DATE</th>
-                    <th>DEPARTMENT</th>
-                    <th>BATCH</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredBoys.length === 0 ? (
+              {/* 🖥️ DESKTOP TABLE VIEW */}
+              <div className="desktop-table-view">
+                <table className="table-container table-with-vertical-lines">
+                  <thead>
                     <tr>
-                      <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#6B7280' }}>
-                        {initialLoading ? '' : 'No boy students match your search.'}
-                      </td>
+                      <th>STUDENT NAME</th>
+                      <th>REGISTER NO</th>
+                      <th>ROOM</th>
+                      <th>JOINING DATE</th>
+                      <th>DEPARTMENT</th>
+                      <th>BATCH</th>
                     </tr>
-                  ) : (
-                    filteredBoys.map(s => {
-                      const meta = getJoiningAndBatch(s.year);
-                      return (
-                        <tr key={s.id}>
-                          <td style={{ fontWeight: 800, color: '#111827' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span style={{ 
-                                width: '32px', 
-                                height: '32px', 
-                                borderRadius: '50%', 
-                                backgroundColor: '#FDE8EB', 
-                                color: '#7A1424', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center',
-                                fontWeight: 900,
-                                fontSize: '13px'
-                              }}>
-                                {s.name ? s.name.charAt(0).toUpperCase() : 'B'}
+                  </thead>
+                  <tbody>
+                    {filteredBoys.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#6B7280' }}>
+                          {initialLoading ? '' : 'No boy students match your search.'}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredBoys.map(s => {
+                        const meta = getJoiningAndBatch(s.year);
+                        return (
+                          <tr key={s.id}>
+                            <td style={{ fontWeight: 800, color: '#111827' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span style={{ 
+                                  width: '32px', height: '32px', borderRadius: '50%', 
+                                  backgroundColor: '#FDE8EB', color: '#7A1424', 
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  fontWeight: 900, fontSize: '13px'
+                                }}>
+                                  {s.name ? s.name.charAt(0).toUpperCase() : 'B'}
+                                </span>
+                                <span>{s.name}</span>
+                              </div>
+                            </td>
+                            <td style={{ fontWeight: 800, color: '#7A1424', fontFamily: 'monospace' }}>{s.rollNo}</td>
+                            <td>
+                              <span style={{ background: '#F3F4F6', padding: '4px 10px', borderRadius: '8px', fontWeight: 800 }}>
+                                {s.roomNo || 'BH-Unassigned'}
                               </span>
-                              <span>{s.name}</span>
-                            </div>
-                          </td>
-                          <td style={{ fontWeight: 800, color: '#7A1424', fontFamily: 'monospace' }}>{s.rollNo}</td>
-                          <td>
-                            <span style={{ background: '#F3F4F6', padding: '4px 10px', borderRadius: '8px', fontWeight: 800 }}>
-                              {s.roomNo || 'BH-Unassigned'}
-                            </span>
-                          </td>
-                          <td style={{ color: '#4B5563', fontWeight: 600 }}>{meta.joiningDate}</td>
-                          <td style={{ fontWeight: 700, color: '#111827' }}>{s.department || 'B.E. CSE'}</td>
-                          <td style={{ fontWeight: 700, color: '#6B7280' }}>{meta.batch}</td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                            </td>
+                            <td style={{ color: '#4B5563', fontWeight: 600 }}>{meta.joiningDate}</td>
+                            <td style={{ fontWeight: 700, color: '#111827' }}>{s.department || 'B.E. CSE'}</td>
+                            <td style={{ fontWeight: 700, color: '#6B7280' }}>{meta.batch}</td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* 📱 MOBILE VIEW: Student Cards */}
+              <div className="mobile-admin-student-cards">
+                {filteredBoys.length === 0 ? (
+                  <p style={{ textAlign: 'center', padding: '20px', color: '#6B7280', fontSize: '13px' }}>
+                    {initialLoading ? '' : 'No boy students match your search.'}
+                  </p>
+                ) : (
+                  filteredBoys.map(s => {
+                    const meta = getJoiningAndBatch(s.year);
+                    return (
+                      <div key={s.id} className="mobile-student-card-item">
+                        <div className="m-std-top">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span className="m-std-avatar">{s.name ? s.name.charAt(0).toUpperCase() : 'B'}</span>
+                            <span className="m-std-name">{s.name}</span>
+                          </div>
+                          <span className="m-std-room">{s.roomNo || 'BH-Unassigned'}</span>
+                        </div>
+                        <div className="m-std-details">
+                          <span><strong>Reg:</strong> {s.rollNo}</span>
+                          <span>•</span>
+                          <span><strong>Dept:</strong> {s.department || 'CSE'}</span>
+                          <span>•</span>
+                          <span><strong>Joined:</strong> {meta.joiningDate}</span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
 
           </div>
@@ -543,106 +591,130 @@ export default function AdminDashboard() {
         {activeTab === 'girls' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '18px' }}>
-              <div className="card" style={{ padding: '18px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#6B7280', fontSize: '11px', letterSpacing: '0.8px' }}>TOTAL GIRLS STUDENTS</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#111827' }}>{girlsStudents.length}</h2>
-                  </div>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#FCE7EB', color: '#7A1424', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Users size={24} />
-                  </div>
+            <div className="admin-stats-grid-2">
+              <div className="card admin-stat-card">
+                <div>
+                  <small>TOTAL GIRLS</small>
+                  <h2>{girlsStudents.length}</h2>
+                </div>
+                <div className="admin-stat-icon red-theme">
+                  <Users size={22} />
                 </div>
               </div>
 
-              <div className="card" style={{ padding: '18px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <small style={{ fontWeight: 800, color: '#6B7280', fontSize: '11px', letterSpacing: '0.8px' }}>GIRLS HOSTEL ROOMS</small>
-                    <h2 style={{ fontSize: '28px', fontWeight: 900, margin: '6px 0 0 0', color: '#111827' }}>{girlsRoomsCount}</h2>
-                  </div>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#FDE8EB', color: '#7A1424', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <DoorClosed size={24} />
-                  </div>
+              <div className="card admin-stat-card">
+                <div>
+                  <small>OCCUPIED ROOMS</small>
+                  <h2>{girlsRoomsCount}</h2>
+                </div>
+                <div className="admin-stat-icon red-theme">
+                  <DoorClosed size={22} />
                 </div>
               </div>
             </div>
 
             <div className="card">
-              <div className="card-header-row" style={{ alignItems: 'center' }}>
+              <div className="card-header-row boys-header-flex">
                 <h3 style={{ margin: 0 }}>
-                  <Building size={18} color="#7A1424" /> Girls Hostel Residents Directory
+                  <Building size={18} color="#7A1424" /> Girls Hostel Directory
                 </h3>
 
                 <div className="clean-search-box-wrap">
                   <Search size={15} color="#9CA3AF" />
                   <input 
                     type="text"
-                    placeholder="Search by student name, roll number, or room"
+                    placeholder="Search name, roll no, room"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
               </div>
 
-              <table className="table-container table-with-vertical-lines">
-                <thead>
-                  <tr>
-                    <th>STUDENT NAME</th>
-                    <th>REGISTER NO</th>
-                    <th>ALLOTTED ROOM</th>
-                    <th>JOINING DATE</th>
-                    <th>DEPARTMENT</th>
-                    <th>BATCH</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredGirls.length === 0 ? (
+              {/* 🖥️ DESKTOP TABLE VIEW */}
+              <div className="desktop-table-view">
+                <table className="table-container table-with-vertical-lines">
+                  <thead>
                     <tr>
-                      <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#6B7280' }}>
-                        {initialLoading ? '' : 'No girl students match your search.'}
-                      </td>
+                      <th>STUDENT NAME</th>
+                      <th>REGISTER NO</th>
+                      <th>ROOM</th>
+                      <th>JOINING DATE</th>
+                      <th>DEPARTMENT</th>
+                      <th>BATCH</th>
                     </tr>
-                  ) : (
-                    filteredGirls.map(s => {
-                      const meta = getJoiningAndBatch(s.year);
-                      return (
-                        <tr key={s.id}>
-                          <td style={{ fontWeight: 800, color: '#111827' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span style={{ 
-                                width: '32px', 
-                                height: '32px', 
-                                borderRadius: '50%', 
-                                backgroundColor: '#FDE8EB', 
-                                color: '#7A1424', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center',
-                                fontWeight: 900,
-                                fontSize: '13px'
-                              }}>
-                                {s.name ? s.name.charAt(0).toUpperCase() : 'G'}
+                  </thead>
+                  <tbody>
+                    {filteredGirls.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#6B7280' }}>
+                          {initialLoading ? '' : 'No girl students match your search.'}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredGirls.map(s => {
+                        const meta = getJoiningAndBatch(s.year);
+                        return (
+                          <tr key={s.id}>
+                            <td style={{ fontWeight: 800, color: '#111827' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span style={{ 
+                                  width: '32px', height: '32px', borderRadius: '50%', 
+                                  backgroundColor: '#FDE8EB', color: '#7A1424', 
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  fontWeight: 900, fontSize: '13px'
+                                }}>
+                                  {s.name ? s.name.charAt(0).toUpperCase() : 'G'}
+                                </span>
+                                <span>{s.name}</span>
+                              </div>
+                            </td>
+                            <td style={{ fontWeight: 800, color: '#7A1424', fontFamily: 'monospace' }}>{s.rollNo}</td>
+                            <td>
+                              <span style={{ background: '#F3F4F6', padding: '4px 10px', borderRadius: '8px', fontWeight: 800 }}>
+                                {s.roomNo || 'LH-Unassigned'}
                               </span>
-                              <span>{s.name}</span>
-                            </div>
-                          </td>
-                          <td style={{ fontWeight: 800, color: '#7A1424', fontFamily: 'monospace' }}>{s.rollNo}</td>
-                          <td>
-                            <span style={{ background: '#F3F4F6', padding: '4px 10px', borderRadius: '8px', fontWeight: 800 }}>
-                              {s.roomNo || 'LH-Unassigned'}
-                            </span>
-                          </td>
-                          <td style={{ color: '#4B5563', fontWeight: 600 }}>{meta.joiningDate}</td>
-                          <td style={{ fontWeight: 700, color: '#111827' }}>{s.department || 'B.E. CSE'}</td>
-                          <td style={{ fontWeight: 700, color: '#6B7280' }}>{meta.batch}</td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                            </td>
+                            <td style={{ color: '#4B5563', fontWeight: 600 }}>{meta.joiningDate}</td>
+                            <td style={{ fontWeight: 700, color: '#111827' }}>{s.department || 'B.E. CSE'}</td>
+                            <td style={{ fontWeight: 700, color: '#6B7280' }}>{meta.batch}</td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* 📱 MOBILE VIEW: Student Cards */}
+              <div className="mobile-admin-student-cards">
+                {filteredGirls.length === 0 ? (
+                  <p style={{ textAlign: 'center', padding: '20px', color: '#6B7280', fontSize: '13px' }}>
+                    {initialLoading ? '' : 'No girl students match your search.'}
+                  </p>
+                ) : (
+                  filteredGirls.map(s => {
+                    const meta = getJoiningAndBatch(s.year);
+                    return (
+                      <div key={s.id} className="mobile-student-card-item">
+                        <div className="m-std-top">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span className="m-std-avatar">{s.name ? s.name.charAt(0).toUpperCase() : 'G'}</span>
+                            <span className="m-std-name">{s.name}</span>
+                          </div>
+                          <span className="m-std-room">{s.roomNo || 'LH-Unassigned'}</span>
+                        </div>
+                        <div className="m-std-details">
+                          <span><strong>Reg:</strong> {s.rollNo}</span>
+                          <span>•</span>
+                          <span><strong>Dept:</strong> {s.department || 'CSE'}</span>
+                          <span>•</span>
+                          <span><strong>Joined:</strong> {meta.joiningDate}</span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
 
           </div>
@@ -654,69 +726,42 @@ export default function AdminDashboard() {
         {activeTab === 'rooms' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div className="card">
-              <div className="card-header-row">
-                <div>
-                  <h3><DoorClosed size={18} color="#7A1424" /> Hostel Room Occupancy Overview</h3>
-                  <small style={{ color: '#6B7280', fontWeight: 600 }}>Boys Hostel & Girls Hostel Room Allocations</small>
-                </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <span style={{ background: '#ECFDF5', color: '#065F46', padding: '4px 12px', borderRadius: '12px', fontWeight: 800, fontSize: '11px' }}>
-                    Available / Normal (4 Pax)
-                  </span>
-                  <span style={{ background: '#FEF2F2', color: '#991B1B', padding: '4px 12px', borderRadius: '12px', fontWeight: 800, fontSize: '11px' }}>
-                    Full (4/4)
-                  </span>
-                </div>
+              <div className="card-header-row rooms-header-flex" style={{ marginBottom: '22px' }}>
+                <h3 style={{ margin: 0 }}><DoorClosed size={18} color="#7A1424" /> Room Occupancy Overview</h3>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px', marginTop: '12px' }}>
+              <div className="admin-rooms-grid">
                 {Object.entries(roomGroups).map(([roomNumber, occupants]) => {
                   const isBoys = roomNumber.toUpperCase().startsWith('BH');
                   const count = occupants.length;
                   const isFull = count >= 4;
 
                   return (
-                    <div 
-                      key={roomNumber} 
-                      style={{ 
-                        border: '1.5px solid #E5E7EB', 
-                        borderRadius: '16px', 
-                        padding: '18px',
-                        backgroundColor: '#ffffff',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ 
+                    <div key={roomNumber} className="admin-room-box-item">
+                      <div className="admin-room-box-header">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span className="admin-room-type-badge" style={{ 
                             background: isBoys ? '#DBEAFE' : '#FCE7EB', 
-                            color: isBoys ? '#1E40AF' : '#7A1424',
-                            padding: '4px 8px',
-                            borderRadius: '8px',
-                            fontWeight: 900,
-                            fontSize: '11px'
+                            color: isBoys ? '#1E40AF' : '#7A1424'
                           }}>
-                            {isBoys ? 'BOYS HOSTEL' : 'GIRLS HOSTEL'}
+                            {isBoys ? 'BH' : 'LH'}
                           </span>
-                          <strong style={{ fontSize: '15px', color: '#111827' }}>{roomNumber}</strong>
+                          <strong className="admin-room-title">{roomNumber}</strong>
                         </div>
-                        <span style={{ 
-                          fontSize: '11.5px', 
-                          fontWeight: 900, 
+                        <span className="admin-room-occupants-badge" style={{ 
                           color: isFull ? '#DC2626' : '#059669',
-                          background: isFull ? '#FEE2E2' : '#D1FAE5',
-                          padding: '3px 8px',
-                          borderRadius: '10px'
+                          background: isFull ? '#FEE2E2' : '#D1FAE5'
                         }}>
-                          {count}/4 Occupants
+                          {count}/4
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {/* Vertical Stack Clean List with Truncation */}
+                      <div className="admin-room-vertical-stack">
                         {occupants.map((occ, idx) => (
-                          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#374151', padding: '4px 0', borderBottom: '1px dashed #F3F4F6' }}>
-                            <span style={{ fontWeight: 700 }}>{occ.name}</span>
-                            <span style={{ fontFamily: 'monospace', color: '#7A1424', fontWeight: 800 }}>{occ.rollNo}</span>
+                          <div key={idx} className="admin-room-occupant-row-stacked">
+                            <span className="admin-occ-name" title={occ.name}>{occ.name}</span>
+                            <span className="admin-occ-roll">{occ.rollNo}</span>
                           </div>
                         ))}
                       </div>
@@ -734,7 +779,7 @@ export default function AdminDashboard() {
         {activeTab === 'resolved' && (
           <div className="card">
             <div className="card-header-row">
-              <h3><FileCheck2 size={18} color="#7A1424" /> Solved Grievance Resolution Archive</h3>
+              <h3><FileCheck2 size={18} color="#7A1424" /> Resolution Archive</h3>
               <span style={{ fontSize: '12px', fontWeight: 800, color: '#059669', background: '#D1FAE5', padding: '4px 12px', borderRadius: '20px' }}>
                 {resolvedList.length} Solved Records
               </span>
@@ -745,51 +790,129 @@ export default function AdminDashboard() {
                 {initialLoading ? '' : 'No complaints have been resolved yet.'}
               </p>
             ) : (
-              <table className="table-container">
-                <thead>
-                  <tr>
-                    <th>CMP ID</th>
-                    <th>Room</th>
-                    <th>Issue Description</th>
-                    <th>Priority</th>
-                    <th>Resolution Status</th>
-                    <th>Resolved Date</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <>
+                {/* 🖥️ DESKTOP TABLE VIEW */}
+                <div className="desktop-table-view">
+                  <table className="table-container">
+                    <thead>
+                      <tr>
+                        <th>CMP ID</th>
+                        <th>Room</th>
+                        <th>Issue Description</th>
+                        <th>Priority</th>
+                        <th>Resolution Status</th>
+                        <th>Resolved Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {resolvedList.map(c => (
+                        <tr key={c.id}>
+                          <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
+                          <td style={{ fontWeight: 800 }}>{c.roomNo}</td>
+                          <td style={{ maxWidth: '340px' }}>{c.description}</td>
+                          <td>
+                            <span style={{ 
+                              fontSize: '11px', 
+                              fontWeight: 900,
+                              color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
+                            }}>
+                              {c.priority}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="status-pill status-RESOLVED" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <CheckCircle size={12} /> RESOLVED
+                            </span>
+                          </td>
+                          <td style={{ color: '#4B5563', fontSize: '12.5px' }}>{new Date(c.updatedAt || c.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* 📱 MOBILE VIEW: Resolution Cards */}
+                <div className="mobile-admin-cards">
                   {resolvedList.map(c => (
-                    <tr key={c.id}>
-                      <td style={{ fontWeight: 900, color: '#7A1424' }}>#{c.complaintNumber}</td>
-                      <td style={{ fontWeight: 800 }}>{c.roomNo}</td>
-                      <td style={{ maxWidth: '340px' }}>{c.description}</td>
-                      <td>
-                        <span style={{ 
-                          fontSize: '11px', 
-                          fontWeight: 900,
-                          color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB' 
-                        }}>
-                          {c.priority}
+                    <div key={c.id} className="mobile-admin-card-item">
+                      <div className="m-card-top-row">
+                        <span className="m-card-cmp-no">#{c.complaintNumber}</span>
+                        <span className="status-pill status-RESOLVED" style={{ fontSize: '10px', padding: '3px 8px' }}>
+                          RESOLVED
                         </span>
-                      </td>
-                      <td>
-                        <span className="status-pill status-RESOLVED" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <CheckCircle size={12} /> RESOLVED
-                        </span>
-                      </td>
-                      <td style={{ color: '#4B5563', fontSize: '12.5px' }}>{new Date(c.updatedAt || c.createdAt).toLocaleDateString()}</td>
-                    </tr>
+                      </div>
+                      <div className="m-card-details-row">
+                        <span className="m-card-room">Room {c.roomNo}</span>
+                        <span className="m-card-bullet">•</span>
+                        <span className="m-card-priority" style={{
+                          color: c.priority === 'EMERGENCY' ? '#DC2626' : c.priority === 'URGENT' ? '#D97706' : '#2563EB'
+                        }}>{c.priority}</span>
+                      </div>
+                      {c.description && (
+                        <div className="m-card-desc-box">
+                          {c.description}
+                        </div>
+                      )}
+                      <div className="m-card-date-row">
+                        <span>{new Date(c.updatedAt || c.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </>
             )}
           </div>
         )}
 
       </main>
 
-      {/* ============================================================ */}
-      {/* 🌟 CURVED CUSTOM DROPDOWN RESOLUTION MODAL */}
-      {/* ============================================================ */}
+      {/* 📱 MOBILE BOTTOM NAVIGATION BAR FOR ADMIN */}
+      <nav className="mobile-bottom-nav">
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'overview' ? 'active' : ''}`}
+          onClick={() => handleTabChange('overview')}
+        >
+          <LayoutDashboard size={20} />
+          <span>Home</span>
+        </button>
+
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'boys' ? 'active' : ''}`}
+          onClick={() => handleTabChange('boys')}
+        >
+          <Building size={20} />
+          <span>Boys</span>
+        </button>
+
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'girls' ? 'active' : ''}`}
+          onClick={() => handleTabChange('girls')}
+        >
+          <Building size={20} />
+          <span>Girls</span>
+        </button>
+
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'rooms' ? 'active' : ''}`}
+          onClick={() => handleTabChange('rooms')}
+        >
+          <DoorClosed size={20} />
+          <span>Rooms</span>
+        </button>
+
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'resolved' ? 'active' : ''}`}
+          onClick={() => handleTabChange('resolved')}
+        >
+          <div className="mobile-icon-badge-wrap">
+            <FileCheck2 size={20} />
+            {unreadResolutionsCount > 0 && activeTab !== 'resolved' && <span className="mobile-badge-dot"></span>}
+          </div>
+          <span>Solved</span>
+        </button>
+      </nav>
+
+      {/* RESOLUTION MODAL */}
       {selectedComplaint && (
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '540px' }}>
